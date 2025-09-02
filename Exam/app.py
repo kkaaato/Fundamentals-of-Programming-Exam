@@ -97,7 +97,7 @@ def final():
     prelim = session.get('prelim_grade', 0)
     midterm = session.get('midterm_grade', 0)
     if request.method == 'POST':
-        # Show a warning if prelim or midterm grade are missing
+        # Show a warning if prelim or midterm grade is missing
         if prelim == 0 or midterm == 0:
             result['warning'] = "Prelim and/or Midterm grades are missing. Access those first."
         else:
