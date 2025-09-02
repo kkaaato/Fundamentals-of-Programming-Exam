@@ -1,0 +1,1 @@
+This is a Prelim Exam for Fundamentals of Programming. It is a grade calculator for the course, it shows the user's overall grade based on their data. It also shows if you pass the dean's whether you pass or not, it will also show if you pass the dean's list if you meet the requirments.
