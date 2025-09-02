@@ -50,6 +50,7 @@ def prelim():
             result['warning'] = "Invalid input. Please enter numeric values."
     return render_template('prelim.html', result=result)
 
+# Function for Midterm Grade Calculation
 @app.route('/midterm', methods=['GET', 'POST'])
 def midterm():
     result = {}
