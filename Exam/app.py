@@ -55,6 +55,7 @@ def prelim():
 def midterm():
     result = {}
     prelim = session.get('prelim_grade', 0)
+    prelim_absences = session.get('prelim_absences', 0)
     if request.method == 'POST':
         # Shows a warning if prelim grade is missing
         if prelim is None or prelim == 0:
@@ -62,6 +63,7 @@ def midterm():
         else:
             try:
                 absences = int(request.form['absences'])
+                total_absences = prelim_absences + absences
                 midterm_exam = float(request.form['midterm_exam'])
                 quizzes = float(request.form['quizzes'])
                 requirements = float(request.form['requirements'])
@@ -74,6 +76,7 @@ def midterm():
                 elif absences >= 4:
                     result['status'] = "FAILED due to excessive absences."
                 else:
+                    session['midterm_absences'] = absences
                     attendance = max(0, 100 - absences * 10)
                     class_standing = quizzes * 0.4 + requirements * 0.3 + recitation * 0.3
                     midterm_grade = midterm_exam * 0.6 + attendance * 0.1 + class_standing * 0.3
@@ -96,6 +99,8 @@ def final():
     result = {}
     prelim = session.get('prelim_grade', 0)
     midterm = session.get('midterm_grade', 0)
+    prelim_absences = session.get('prelim_absences', 0)
+    midterm_absences = session.get('midterm_absences', 0)
     if request.method == 'POST':
         # Show a warning if prelim or midterm grade is missing
         if prelim == 0 or midterm == 0:
@@ -103,6 +108,7 @@ def final():
         else:
             try:
                 absences = int(request.form['absences'])
+                total_absences = prelim_absences + midterm_absences + absences
                 final_exam = float(request.form['final_exam'])
                 quizzes = float(request.form['quizzes'])
                 requirements = float(request.form['requirements'])
@@ -115,6 +121,7 @@ def final():
                 elif absences >= 4:
                     result['status'] = "FAILED due to excessive absences."
                 else:
+                    session['final_absences'] = absences
                     attendance = max(0, 100 - absences * 10)
                     class_standing = quizzes * 0.4 + requirements * 0.3 + recitation * 0.3
                     final_term = final_exam * 0.6 + attendance * 0.1 + class_standing * 0.3
@@ -125,12 +132,12 @@ def final():
                     result['prelim_grade'] = round(prelim, 2)
                     result['midterm_grade'] = round(midterm, 2)
 
-                if final_grade > 90:
-                    result['remark'] = "CONGRATULATIONS! You passed the dean's list."
-                elif final_grade > 75:
-                    result['remark'] = "Good Job! You passed the passing grade."
-                else:
-                    result['remark'] = "You failed... Try again next semester."
+                    if final_grade > 90:
+                        result['remark'] = "CONGRATULATIONS! You passed the dean's list."
+                    elif final_grade > 75:
+                        result['remark'] = "Good Job! You passed the passing grade."
+                    else:
+                        result['remark'] = "You failed... Try again next semester."
             except ValueError:
                 result['error'] = "Invalid input. Please enter numeric values."
     return render_template('final.html', result=result)
